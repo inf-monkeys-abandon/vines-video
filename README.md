@@ -6,6 +6,13 @@ This is the offical implementation of the ZeroFlicks, a zero shot video generati
 
 * [06/05/2023] We have released the code for the ZeroFlicks pipeline.
 
+## TODO
+[] Code check and clean
+[] Add more details to README
+[] Add Arxiv link
+[] Add support for pip install
+
+
 ## Setup
 
 ### Install Dependencies 
