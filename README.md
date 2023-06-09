@@ -4,7 +4,9 @@ This is the offical implementation of the ZeroFlicks, a zero shot video generati
 
 ## News
 
+* [06/09/2023] We have uploaded the api for the two-stage zero-shot video generation pipeline.
 * [06/05/2023] We have released the code for the ZeroFlicks pipeline.
+
 
 <!-- ## TODO
 
@@ -56,7 +58,7 @@ We prepared the `go_zero.py` to provide an example of how to use our zero-shot v
 ``` shell
 python go_zero.py
 ```
-The results will be under `output`
+The results will be under `output`.
 
 
 ## Controlled Zero-shot Text to Video Generation
