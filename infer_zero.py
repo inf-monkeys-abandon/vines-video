@@ -11,6 +11,14 @@ in_dir = '/home/ubuntu/data_cya/output'
 out_dir = '/home/ubuntu/t2v-ljy/output_cya'
 os.makedirs(out_dir, exist_ok=True)
 
+# stage 1: generate pose sequence using motion diffusion model. https://github.com/GuyTevet/motion-diffusion-model
+
+
+
+
+
+
+
 for video_name in os.listdir(in_dir):
 
     in_path = os.path.join(in_dir, video_name)
