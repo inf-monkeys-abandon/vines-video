@@ -1,0 +1,3 @@
+[submodule "motion-diffusion-model"]
+	path = motion-diffusion-model
+	url = https://github.com/GuyTevet/motion-diffusion-model

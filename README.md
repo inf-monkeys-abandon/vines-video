@@ -33,32 +33,42 @@ pip install -r requirements.txt
 You are all set if you only want to use the controlled zero-shot video generation pipeline. 
 ### 3. [Optional] Environment setup for the two-stage zero-shot video generation pipeline
 
-If you want to try our two-stage Zero-shot Text to Video Generation pipeline, you need to install a text to motion model. Our model can work with any off-the-shelf text to motion model, but we recommend using [MotionDiffusionModel](https://github.com/GuyTevet/motion-diffusion-model) for its simplicity and performance.
+If you want to try our two-stage Zero-shot Text to Video Generation pipeline, you need to install a text to motion model. Our model can work with any off-the-shelf text to motion model, but we recommend using [MotionDiffusionModel](https://github.com/GuyTevet/motion-diffusion-model) for its simplicity and performance. 
 
-
-
-3. Install [MotionDiffusionModel](https://github.com/GuyTevet/motion-diffusion-model) following their instructions. Note that this repo is dependent on python3.7, but we have tested it with python3.10 and it works fine.
-
-4. Put the MotionDiffusionModel repo under the same directory as this repo, and rename it to `motion-diffusion-model`.
-
-<!-- ### Import from pip -->
-TBA
-<!-- We have also released a pip package for the zero-shot video generation pipeline. You can install it using:
+Install [MotionDiffusionModel](https://github.com/GuyTevet/motion-diffusion-model). This should be already done if you have followed the previous step, the "--recursive" flag will automatically clone the MotionDiffusionModel repo. If you have not, you can do it manually by:
 ``` shell
-pip install zero-flicks
-``` -->
+git clone https://github.com/GuyTevet/motion-diffusion-model
+cp -r motion-diffusion-model/ zeroflicks/
+```
+You also need to download their pretrained models following their instructions, and put them into the corresponding folders under `zeroflicks/motion-diffusion-model/`.
+
+
+We have modified the plot function in motion-diffusion-model to support our two-stage pipeline. You need to overwrite the original plot function with our modified version:
+``` shell
+cp ./misc/plot_script.py ./motion-diffusion-model/data_loaders/humanml/utils/plot_script.py
+```
+
+That's it! You are all set to use our two-stage zero-shot video generation pipeline.
 
 
 ## Zero-shot Text to Video Generation
-
+We prepared the `go_zero.py` to provide an example of how to use our zero-shot video generation api. You can run it with:
+``` shell
+python go_zero.py
+```
+The results will be under `output`
 
 
 ## Controlled Zero-shot Text to Video Generation
+TBA
 
-## Acknowledgements
+## Controlled Zero-shot Text to Video Generation with dreambooth
+TBA
+
+# Acknowledgements
+
+We thank Inf-Monkeys for sponsoring this research, please check out their [website](https://frame.infmonkeys.com/) for more awesome applications.
 
 Our code is based on [Text2Video-Zero](https://github.com/Picsart-AI-Research/Text2Video-Zero/tree/main), please checkout their repo for more details.
 
 Our two-stage zero-shot video generation pipeline is dependent on [MotionDiffusionModel](https://github.com/GuyTevet/motion-diffusion-model)
-
-We thank Inf-Monkeys for sponsoring this research, please check out their [website](https://frame.infmonkeys.com/) for more awesome applications.
