@@ -4,6 +4,7 @@ This is the offical implementation of the ZeroFlicks, a zero shot video generati
 
 ## News
 
+* [06/13/2023] We have uploaded the api for the controlled video generation.
 * [06/09/2023] We have uploaded the api for the two-stage zero-shot video generation pipeline.
 * [06/05/2023] We have released the code for the ZeroFlicks pipeline.
 
@@ -62,7 +63,14 @@ The results will be under `output`.
 
 
 ## Controlled Zero-shot Text to Video Generation
-TBA
+We prepared the `go_control.py` to provide an example of how to use our controlled video generation api. You can run it with:
+``` shell
+python go_control.py
+```
+The results will be under `output`.
+
+You can alse try to control your video generation with other controls (e.g., depth and canny), just change the call functions in model.py and you are good to go!
+
 
 ## Controlled Zero-shot Text to Video Generation with dreambooth
 TBA
