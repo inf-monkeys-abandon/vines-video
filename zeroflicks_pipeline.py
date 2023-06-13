@@ -15,22 +15,6 @@ import cv2
 from pdb import set_trace as st
 
 
-def get_views(panorama_height, panorama_width, window_size=64, stride=8):
-    # panorama_height /= 8
-    # panorama_width /= 8
-    num_blocks_height = (panorama_height - window_size) // stride + 1
-    num_blocks_width = (panorama_width - window_size) // stride + 1
-    total_num_blocks = int(num_blocks_height * num_blocks_width)
-    views = []
-
-    for i in range(total_num_blocks):
-        h_start = int((i // num_blocks_width) * stride)
-        h_end = h_start + window_size
-        w_start = int((i % num_blocks_width) * stride)
-        w_end = w_start + window_size
-        views.append((h_start, h_end, w_start, w_end))
-    return views
-
 def conbine_condition(conds):
     """
     conds: f x c x h x w
@@ -38,7 +22,6 @@ def conbine_condition(conds):
     mean_cond = torch.mean(conds, dim=0)
     conds[0, :, :, :] = mean_cond
     return conds
-    # return mean_cond * 0.5 + conds * 0.5
 
 
 @dataclass
@@ -60,7 +43,7 @@ class StableDiffusionPipelineOutput(BaseOutput):
 
 
 
-class oursControlPipelineAllMultiBA(StableDiffusionControlNetPipeline):
+class ZeroFlicksPipeline(StableDiffusionControlNetPipeline):
     
     def __init__(
         self,
@@ -100,6 +83,7 @@ class oursControlPipelineAllMultiBA(StableDiffusionControlNetPipeline):
         cross_attention_kwargs: Optional[Dict[str, Any]] = None,
         controlnet_conditioning_scale: Union[float, List[float]] = 1.0,
         guess_mode: bool = False,
+        chunk_size: int = 8,
     ):
         # 0. Default height and width to unet
         height, width = self._default_height_width(height, width, image)
@@ -217,9 +201,7 @@ class oursControlPipelineAllMultiBA(StableDiffusionControlNetPipeline):
                     controlnet_latent_model_input = latent_model_input
                     controlnet_prompt_embeds = prompt_embeds
 
-                # 拆分chunk
                 f, c, h, w = controlnet_latent_model_input.shape
-                chunk_size = 8
                 chunk_ids = np.arange(0, f, chunk_size)
                 list_down_block_res_samples = []
                 list_mid_block_res_sample = []
@@ -261,12 +243,9 @@ class oursControlPipelineAllMultiBA(StableDiffusionControlNetPipeline):
                     down_block_res_samples = [torch.cat([torch.zeros_like(d), d]) for d in down_block_res_samples]
                     mid_block_res_sample = torch.cat([torch.zeros_like(mid_block_res_sample), mid_block_res_sample])
 
-                # 拆分chunk
                 f, c, h, w = controlnet_latent_model_input.shape
                 f = f // 2 
-                chunk_size = 8
                 chunk_ids = np.arange(0, f, chunk_size - 1)
-                # list_noise = []
                 noise_pred = torch.zeros_like(latent_model_input)
 
                 for i in range(len(chunk_ids)):
@@ -329,8 +308,17 @@ class oursControlPipelineAllMultiBA(StableDiffusionControlNetPipeline):
             # 10. Convert to PIL
             image = self.numpy_to_pil(image)
         else:
-            # 8. Post-processing
-            image = self.decode_latents(latents)
+            f, c, h, w = latents.shape
+            chunk_ids = np.arange(0, f, chunk_size)
+            list_image = []
+
+            for i in range(len(chunk_ids)):
+                ch_start = chunk_ids[i]
+                ch_end = f if i == len(chunk_ids) - 1 else chunk_ids[i + 1]
+                frame_ids = list(range(ch_start, ch_end))
+                latent_input = latents[frame_ids]
+                list_image.append(self.decode_latents(latent_input))
+            image = np.concatenate(list_image, axis=0)
 
             # 9. Run safety checker
             image, has_nsfw_concept = self.run_safety_checker(image, device, prompt_embeds.dtype)

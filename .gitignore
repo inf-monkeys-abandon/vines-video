@@ -10,3 +10,7 @@ annotator/ckpts/hand_pose_model.pth
 copy.sh
 push_git.sh
 
+.DS_Store
+
+model_new.py
+ours_pipeline_flow_cya.py

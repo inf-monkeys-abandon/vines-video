@@ -6,22 +6,13 @@ from time import time
 
 USE_OUR_METHOD_FLAG.set(False)
 
-in_prompt = 'a man throwing a ball'
+in_prompt = 'an astronaut is dancing'
 out_name = in_prompt.replace(' ', '_').replace('.', '')
-
-cache_dir = '_motion_cache'
-os.makedirs(cache_dir, exist_ok=True)
 
 out_dir = 'output'
 os.makedirs(out_dir, exist_ok=True)
 
-# stage 1: generate pose sequence using motion diffusion model. https://github.com/GuyTevet/motion-diffusion-model
-
-os.system("""cd /home/ubuntu/motion-diffusion-model && python -m sample.generate --model_path ./save/humanml_trans_enc_512/model000200000.pt --text_prompt "a man is waving with right hand slowly." --num_repetitions 1""")
-
-# stage 2: generate video using zeroflicks
-
-in_path = f"motion-diffusion-model/save/humanml_trans_enc_512/samples_humanml_trans_enc_512_000200000_seed10_{out_name}/sample00.mp4"
+in_path = f"/Users/wuhe/private_code/vines-video/__assets__/poses_skeleton_gifs/dance1_corr.mp4"
 
 print("Processing video using t2v zero: ", in_path)
 model = Model(device = "cuda", dtype = torch.float16)
@@ -30,4 +21,5 @@ motion_path = in_path
 # motion_path = '__assets__/poses_skeleton_gifs/dance2_corr.mp4'
 out_path = os.path.join(out_dir, "zeroflicks_" + out_name)
 model.process_zeroflicks_pose(motion_path, prompt=prompt, save_path=out_path, guidance_scale=7.5)
+
 
